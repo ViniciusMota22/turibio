@@ -1,0 +1,246 @@
+{
+  "clinica.png": {
+    "width": 1200,
+    "height": 628,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/clinica-400.webp",
+        "avif": "/images/clinica-400.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/images/clinica-800.webp",
+        "avif": "/images/clinica-800.avif"
+      },
+      {
+        "width": 1200,
+        "webp": "/images/clinica-1200.webp",
+        "avif": "/images/clinica-1200.avif"
+      }
+    ]
+  },
+  "consultorio-novo.jpg": {
+    "width": 1200,
+    "height": 1715,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/consultorio-novo-400.webp",
+        "avif": "/images/consultorio-novo-400.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/images/consultorio-novo-800.webp",
+        "avif": "/images/consultorio-novo-800.avif"
+      },
+      {
+        "width": 1200,
+        "webp": "/images/consultorio-novo-1200.webp",
+        "avif": "/images/consultorio-novo-1200.avif"
+      }
+    ]
+  },
+  "equipe/731158349_17942677818247738_4921347707780340768_n.jpg": {
+    "width": 640,
+    "height": 1138,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/equipe/731158349_17942677818247738_4921347707780340768_n-400.webp",
+        "avif": "/images/equipe/731158349_17942677818247738_4921347707780340768_n-400.avif"
+      },
+      {
+        "width": 640,
+        "webp": "/images/equipe/731158349_17942677818247738_4921347707780340768_n-640.webp",
+        "avif": "/images/equipe/731158349_17942677818247738_4921347707780340768_n-640.avif"
+      }
+    ]
+  },
+  "equipe/742771039_17946492786247738_7511137986732517166_n.webp": {
+    "width": 640,
+    "height": 1138,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/equipe/742771039_17946492786247738_7511137986732517166_n-400.webp",
+        "avif": "/images/equipe/742771039_17946492786247738_7511137986732517166_n-400.avif"
+      },
+      {
+        "width": 640,
+        "webp": "/images/equipe/742771039_17946492786247738_7511137986732517166_n-640.webp",
+        "avif": "/images/equipe/742771039_17946492786247738_7511137986732517166_n-640.avif"
+      }
+    ]
+  },
+  "equipe/746164079_17945692668247738_4256013866608381426_n.webp": {
+    "width": 640,
+    "height": 1138,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/equipe/746164079_17945692668247738_4256013866608381426_n-400.webp",
+        "avif": "/images/equipe/746164079_17945692668247738_4256013866608381426_n-400.avif"
+      },
+      {
+        "width": 640,
+        "webp": "/images/equipe/746164079_17945692668247738_4256013866608381426_n-640.webp",
+        "avif": "/images/equipe/746164079_17945692668247738_4256013866608381426_n-640.avif"
+      }
+    ]
+  },
+  "equipe/746285169_17945692620247738_1989676438566413693_n.webp": {
+    "width": 640,
+    "height": 1138,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/equipe/746285169_17945692620247738_1989676438566413693_n-400.webp",
+        "avif": "/images/equipe/746285169_17945692620247738_1989676438566413693_n-400.avif"
+      },
+      {
+        "width": 640,
+        "webp": "/images/equipe/746285169_17945692620247738_1989676438566413693_n-640.webp",
+        "avif": "/images/equipe/746285169_17945692620247738_1989676438566413693_n-640.avif"
+      }
+    ]
+  },
+  "equipe/748053991_17945692635247738_7823210411068339356_n.webp": {
+    "width": 640,
+    "height": 1138,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/equipe/748053991_17945692635247738_7823210411068339356_n-400.webp",
+        "avif": "/images/equipe/748053991_17945692635247738_7823210411068339356_n-400.avif"
+      },
+      {
+        "width": 640,
+        "webp": "/images/equipe/748053991_17945692635247738_7823210411068339356_n-640.webp",
+        "avif": "/images/equipe/748053991_17945692635247738_7823210411068339356_n-640.avif"
+      }
+    ]
+  },
+  "equipe/749681241_17945692563247738_1020044448583227065_n.webp": {
+    "width": 640,
+    "height": 1138,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/equipe/749681241_17945692563247738_1020044448583227065_n-400.webp",
+        "avif": "/images/equipe/749681241_17945692563247738_1020044448583227065_n-400.avif"
+      },
+      {
+        "width": 640,
+        "webp": "/images/equipe/749681241_17945692563247738_1020044448583227065_n-640.webp",
+        "avif": "/images/equipe/749681241_17945692563247738_1020044448583227065_n-640.avif"
+      }
+    ]
+  },
+  "equipe/753231592_17946492798247738_7659393754494299367_n.webp": {
+    "width": 640,
+    "height": 1138,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/equipe/753231592_17946492798247738_7659393754494299367_n-400.webp",
+        "avif": "/images/equipe/753231592_17946492798247738_7659393754494299367_n-400.avif"
+      },
+      {
+        "width": 640,
+        "webp": "/images/equipe/753231592_17946492798247738_7659393754494299367_n-640.webp",
+        "avif": "/images/equipe/753231592_17946492798247738_7659393754494299367_n-640.avif"
+      }
+    ]
+  },
+  "equipe.png": {
+    "width": 1200,
+    "height": 610,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/equipe-400.webp",
+        "avif": "/images/equipe-400.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/images/equipe-800.webp",
+        "avif": "/images/equipe-800.avif"
+      },
+      {
+        "width": 1200,
+        "webp": "/images/equipe-1200.webp",
+        "avif": "/images/equipe-1200.avif"
+      }
+    ]
+  },
+  "espaco.png": {
+    "width": 1200,
+    "height": 629,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/espaco-400.webp",
+        "avif": "/images/espaco-400.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/images/espaco-800.webp",
+        "avif": "/images/espaco-800.avif"
+      },
+      {
+        "width": 1200,
+        "webp": "/images/espaco-1200.webp",
+        "avif": "/images/espaco-1200.avif"
+      }
+    ]
+  },
+  "essencia-protese.png": {
+    "width": 872,
+    "height": 867,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/essencia-protese-400.webp",
+        "avif": "/images/essencia-protese-400.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/images/essencia-protese-800.webp",
+        "avif": "/images/essencia-protese-800.avif"
+      },
+      {
+        "width": 872,
+        "webp": "/images/essencia-protese-872.webp",
+        "avif": "/images/essencia-protese-872.avif"
+      }
+    ]
+  },
+  "hero-consultorio.png": {
+    "width": 749,
+    "height": 624,
+    "variants": [
+      {
+        "width": 400,
+        "webp": "/images/hero-consultorio-400.webp",
+        "avif": "/images/hero-consultorio-400.avif"
+      },
+      {
+        "width": 749,
+        "webp": "/images/hero-consultorio-749.webp",
+        "avif": "/images/hero-consultorio-749.avif"
+      }
+    ]
+  },
+  "recepcao-nova.png": {
+    "width": 345,
+    "height": 504,
+    "variants": [
+      {
+        "width": 345,
+        "webp": "/images/recepcao-nova-345.webp",
+        "avif": "/images/recepcao-nova-345.avif"
+      }
+    ]
+  }
+}
