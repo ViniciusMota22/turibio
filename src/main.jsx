@@ -25,7 +25,6 @@ import {
   Menu,
   X,
   MapPin,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -55,32 +54,48 @@ const teamImages = [
   "753231592_17946492798247738_7659393754494299367_n.webp",
 ];
 
+// Shared hero timeline: photo 0–.55s, words .14–.86s, supporting copy .64–.98s.
+const heroTiming = {
+  photo: 0.55,
+  wordStart: 0.14,
+  wordStagger: 0.06,
+  wordDuration: 0.36,
+  copyStart: 0.64,
+  copyDuration: 0.34,
+};
 function HeroTitle() {
   const reduced = useReducedMotion();
   return (
     <h1 aria-label="Seu sorriso. Sua história. Seu novo sorriso.">
       {["Seu sorriso.", "Sua história.", "Seu novo sorriso."].map((line, i) => (
-        <React.Fragment key={line}>
-          {i > 0 && <br />}
-          <span aria-hidden="true" className={i === 2 ? "hero-emphasis" : ""}>
-            {line.split(" ").map((word, j) => (
-              <m.span
-                className="hero-word"
-                key={j}
-                initial={
-                  reduced ? false : { opacity: 0, y: 12, filter: "blur(4px)" }
-                }
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{
-                  duration: reduced ? 0 : 0.35,
-                  delay: reduced ? 0 : (i * 2 + j) * 0.06,
-                }}
-              >
-                {word}{" "}
-              </m.span>
-            ))}
-          </span>
-        </React.Fragment>
+        <span
+          key={line}
+          aria-hidden="true"
+          className={`hero-title-line ${i === 2 ? "hero-emphasis" : ""}`}
+        >
+          {line.split(" ").map((word, j) => (
+            <m.span
+              className="hero-word"
+              key={word + j}
+              variants={{
+                hidden: { opacity: reduced ? 1 : 0, y: reduced ? 0 : 12 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: reduced ? 0 : heroTiming.wordDuration,
+                    delay: reduced
+                      ? 0
+                      : heroTiming.wordStart +
+                        (i * 2 + j) * heroTiming.wordStagger,
+                  },
+                },
+              }}
+            >
+              {word}{" "}
+            </m.span>
+          ))}
+        </span>
       ))}
     </h1>
   );
@@ -96,7 +111,21 @@ function HeroVisual() {
   const sealY = useTransform(scrollYProgress, [0, 1], [0, -16]);
   return (
     <div ref={ref} className="hero-visual">
-      <div className="hero-photo-frame">
+      <m.div
+        className="hero-photo-frame"
+        variants={{
+          hidden: {
+            clipPath: reduced ? "inset(0 0 0% 0)" : "inset(0 0 100% 0)",
+          },
+          visible: {
+            clipPath: "inset(0 0 0% 0)",
+            transition: {
+              duration: reduced ? 0 : heroTiming.photo,
+              ease: [0.22, 1, 0.36, 1],
+            },
+          },
+        }}
+      >
         <m.div className="hero-parallax" style={{ y: reduced ? 0 : y }}>
           <ResponsiveImage
             hero
@@ -106,7 +135,7 @@ function HeroVisual() {
           />
         </m.div>
         <div className="photo-shade" />
-      </div>
+      </m.div>
       <m.div
         className="round-seal"
         style={{ y: reduced ? 0 : sealY, rotate: 12 }}
@@ -811,20 +840,52 @@ function Accordion({ items }) {
   );
 }
 function Home() {
+  const reduced = useReducedMotion();
   return (
     <>
-      <section className="hero container">
+      <m.section
+        className="hero container"
+        initial={reduced ? false : "hidden"}
+        animate="visible"
+      >
         <div className="hero-copy">
-          <Reveal>
+          <div className="hero-content">
             <span className="eyebrow">
               <span className="little-line" /> ODONTOLOGIA FEITA DE CUIDADO
             </span>
             <HeroTitle />
-            <p>
+            <m.p
+              variants={{
+                hidden: { opacity: reduced ? 1 : 0, y: reduced ? 0 : 6 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: reduced ? 0 : heroTiming.copyDuration,
+                    delay: reduced ? 0 : heroTiming.copyStart,
+                  },
+                },
+              }}
+            >
               Um espaço para ouvir você, acolher suas dúvidas e cuidar do seu
               sorriso em cada etapa.
-            </p>
-            <WhatsApp />
+            </m.p>
+            {/* Keep the CTA readable and clickable from the first frame; only its position settles last. */}
+            <m.div
+              className="hero-action"
+              variants={{
+                hidden: { y: reduced ? 0 : 5 },
+                visible: {
+                  y: 0,
+                  transition: {
+                    duration: reduced ? 0 : 0.28,
+                    delay: reduced ? 0 : 0.7,
+                  },
+                },
+              }}
+            >
+              <WhatsApp />
+            </m.div>
             <a
               className="hero-location"
               href="https://maps.app.goo.gl/z1x1SN4i8SE5iHdq6"
@@ -833,10 +894,10 @@ function Home() {
             >
               <MapPin size={15} /> Setor Garavelo · Aparecida de Goiânia
             </a>
-          </Reveal>
+          </div>
         </div>
         <HeroVisual />
-      </section>
+      </m.section>
       <ValuesStrip />
       <section className="section container treatments" id="tratamentos">
         <Reveal className="section-heading">
@@ -1354,7 +1415,9 @@ function AnimatedRoutes() {
               .getElementById(location.hash.slice(1))
               ?.scrollIntoView({ behavior: "instant" });
         }}
-        initial={reduced ? false : { opacity: 0, y: 8 }}
+        initial={
+          reduced || location.pathname === "/" ? false : { opacity: 0, y: 8 }
+        }
         animate={{ opacity: 1, y: 0 }}
         exit={reduced ? undefined : { opacity: 0, y: -6 }}
         transition={{ duration: reduced ? 0 : 0.18 }}

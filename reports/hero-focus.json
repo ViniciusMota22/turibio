@@ -1,0 +1,98 @@
+[
+  {
+    "width": 360,
+    "reduced": false,
+    "initial": {
+      "opacity": 1,
+      "visibleInViewport": true,
+      "hit": true,
+      "time": 461.79999999701977
+    },
+    "overflow": false,
+    "mask": "inset(0px 0px 0%)",
+    "words": true,
+    "animations": 1,
+    "heading": "Seu sorriso. Sua história. Seu novo sorriso.",
+    "errors": []
+  },
+  {
+    "width": 768,
+    "reduced": false,
+    "initial": {
+      "opacity": 1,
+      "visibleInViewport": true,
+      "hit": true,
+      "time": 360.59999999403954
+    },
+    "overflow": false,
+    "mask": "inset(0px 0px 0%)",
+    "words": true,
+    "animations": 1,
+    "heading": "Seu sorriso. Sua história. Seu novo sorriso.",
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "reduced": false,
+    "initial": {
+      "opacity": 1,
+      "visibleInViewport": true,
+      "hit": true,
+      "time": 386.40000000596046
+    },
+    "overflow": false,
+    "mask": "inset(0px 0px 0%)",
+    "words": true,
+    "animations": 1,
+    "heading": "Seu sorriso. Sua história. Seu novo sorriso.",
+    "errors": []
+  },
+  {
+    "width": 360,
+    "reduced": true,
+    "initial": {
+      "opacity": 1,
+      "visibleInViewport": true,
+      "hit": true,
+      "time": 256.29999999701977
+    },
+    "overflow": false,
+    "mask": "none",
+    "words": true,
+    "animations": 0,
+    "heading": "Seu sorriso. Sua história. Seu novo sorriso.",
+    "errors": []
+  },
+  {
+    "width": 768,
+    "reduced": true,
+    "initial": {
+      "opacity": 1,
+      "visibleInViewport": true,
+      "hit": true,
+      "time": 287.09999999403954
+    },
+    "overflow": false,
+    "mask": "none",
+    "words": true,
+    "animations": 0,
+    "heading": "Seu sorriso. Sua história. Seu novo sorriso.",
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "reduced": true,
+    "initial": {
+      "opacity": 1,
+      "visibleInViewport": true,
+      "hit": true,
+      "time": 307
+    },
+    "overflow": false,
+    "mask": "none",
+    "words": true,
+    "animations": 0,
+    "heading": "Seu sorriso. Sua história. Seu novo sorriso.",
+    "errors": []
+  }
+]
