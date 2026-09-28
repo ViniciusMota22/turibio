@@ -1,0 +1,1515 @@
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Routes,
+  Route,
+  Link,
+  useLocation,
+} from "react-router-dom";
+import {
+  m,
+  LazyMotion,
+  domAnimation,
+  AnimatePresence,
+  MotionConfig,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  useInView,
+  useSpring,
+} from "motion/react";
+import {
+  ArrowUpRight,
+  ArrowRight,
+  Menu,
+  X,
+  MapPin,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  HeartHandshake,
+  Smile,
+  CircleDot,
+  ShieldCheck,
+  MessageCircle,
+} from "lucide-react";
+import "./style.css";
+import ResponsiveImage from "./components/ResponsiveImage";
+import { clinic, streetLine, fullAddress } from "./data/clinic";
+import { seoFor, applyHead } from "./seo";
+import "@fontsource-variable/manrope";
+import "@fontsource/cormorant-garamond/400.css";
+import "@fontsource/cormorant-garamond/400-italic.css";
+
+const phone = clinic.phone;
+const whatsapp = (subject = "") =>
+  `https://wa.me/${phone}?text=${encodeURIComponent(`Olá! Vim pelo site da Turíbio e gostaria de ${subject ? `informações sobre ${subject}` : "agendar uma avaliação"}.`)}`;
+
+const teamImages = [
+  "731158349_17942677818247738_4921347707780340768_n.jpg",
+  "742771039_17946492786247738_7511137986732517166_n.webp",
+  "746164079_17945692668247738_4256013866608381426_n.webp",
+  "746285169_17945692620247738_1989676438566413693_n.webp",
+  "748053991_17945692635247738_7823210411068339356_n.webp",
+  "749681241_17945692563247738_1020044448583227065_n.webp",
+  "753231592_17946492798247738_7659393754494299367_n.webp",
+];
+
+// Shared hero timeline: photo 0–.55s, words .14–.86s, supporting copy .64–.98s.
+const heroTiming = {
+  photo: 0.55,
+  wordStart: 0.14,
+  wordStagger: 0.06,
+  wordDuration: 0.36,
+  copyStart: 0.64,
+  copyDuration: 0.34,
+};
+function HeroTitle() {
+  const reduced = useReducedMotion();
+  return (
+    <h1 aria-label="Seu sorriso. Sua história. Seu novo sorriso.">
+      {["Seu sorriso.", "Sua história.", "Seu novo sorriso."].map((line, i) => (
+        <span
+          key={line}
+          aria-hidden="true"
+          className={`hero-title-line ${i === 2 ? "hero-emphasis" : ""}`}
+        >
+          {line.split(" ").map((word, j) => (
+            <m.span
+              className="hero-word"
+              key={word + j}
+              variants={{
+                hidden: { opacity: reduced ? 1 : 0, y: reduced ? 0 : 12 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: reduced ? 0 : heroTiming.wordDuration,
+                    delay: reduced
+                      ? 0
+                      : heroTiming.wordStart +
+                        (i * 2 + j) * heroTiming.wordStagger,
+                  },
+                },
+              }}
+            >
+              {word}{" "}
+            </m.span>
+          ))}
+        </span>
+      ))}
+    </h1>
+  );
+}
+function HeroVisual() {
+  const ref = useRef(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [0, 40]);
+  const sealY = useTransform(scrollYProgress, [0, 1], [0, -16]);
+  return (
+    <div ref={ref} className="hero-visual">
+      <m.div
+        className="hero-photo-frame"
+        variants={{
+          hidden: {
+            clipPath: reduced ? "inset(0 0 0% 0)" : "inset(0 0 100% 0)",
+          },
+          visible: {
+            clipPath: "inset(0 0 0% 0)",
+            transition: {
+              duration: reduced ? 0 : heroTiming.photo,
+              ease: [0.22, 1, 0.36, 1],
+            },
+          },
+        }}
+      >
+        <m.div className="hero-parallax" style={{ y: reduced ? 0 : y }}>
+          <ResponsiveImage
+            hero
+            className="hero-direct-image"
+            src="/images/hero-consultorio.png"
+            alt="Consultório da Turíbio Odontologia"
+          />
+        </m.div>
+        <div className="photo-shade" />
+      </m.div>
+      <m.div
+        className="round-seal"
+        style={{ y: reduced ? 0 : sealY, rotate: 12 }}
+      >
+        <Tooth />
+        <span>
+          CUIDAR É<br />O NOSSO JEITO.
+        </span>
+      </m.div>
+      <div className="hero-note">
+        <span className="note-icon">
+          <HeartHandshake size={26} />
+        </span>
+        <div>
+          <strong>
+            Antes do tratamento,
+            <br />
+            uma boa conversa.
+          </strong>
+          <span>Estamos aqui para ouvir você.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TeamCoverflow() {
+  const [active, setActive] = useState(0);
+  const [compact, setCompact] = useState(false);
+  const swipeStart = useRef(null);
+  const suppressClick = useRef(false);
+  const coverflowRef = useRef(null);
+  const wheelLock = useRef(false);
+  useEffect(() => {
+    const element = coverflowRef.current;
+    let timer;
+    const wheel = (e) => {
+      if (Math.abs(e.deltaY) < Math.abs(e.deltaX) || Math.abs(e.deltaY) < 4)
+        return;
+      const next = Math.max(
+        0,
+        Math.min(teamImages.length - 1, active + (e.deltaY > 0 ? 1 : -1)),
+      );
+      if (next === active) return;
+      e.preventDefault();
+      if (wheelLock.current) return;
+      wheelLock.current = true;
+      setActive(next);
+      timer = setTimeout(() => {
+        wheelLock.current = false;
+      }, 420);
+    };
+    element.addEventListener("wheel", wheel, { passive: false });
+    return () => {
+      element.removeEventListener("wheel", wheel);
+      clearTimeout(timer);
+      wheelLock.current = false;
+    };
+  }, [active]);
+  useEffect(() => {
+    if (coverflowRef.current?.contains(document.activeElement))
+      coverflowRef.current
+        .querySelector(".is-active")
+        ?.focus({ preventScroll: true });
+  }, [active]);
+  const reduced = useReducedMotion();
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 760px)");
+    const sync = () => setCompact(mq.matches);
+    sync();
+    mq.addEventListener?.("change", sync);
+    return () => mq.removeEventListener?.("change", sync);
+  }, []);
+  const go = (next) =>
+    setActive(Math.max(0, Math.min(teamImages.length - 1, next)));
+  const spacing = compact ? 154 : 238;
+  return (
+    <section className="team-coverflow-section" aria-labelledby="team-title">
+      <div className="container team-coverflow-head">
+        <Reveal>
+          <span className="eyebrow">NOSSA EQUIPE</span>
+          <h2 id="team-title">
+            Presença, técnica
+            <br />
+            <em>e cuidado humano.</em>
+          </h2>
+        </Reveal>
+        <div className="team-coverflow-meta">
+          <p>Deslize para conhecer a equipe.</p>
+          <div className="coverflow-controls">
+            <button
+              onClick={() => go(active - 1)}
+              disabled={active === 0}
+              aria-label="Profissional anterior"
+            >
+              <ChevronLeft />
+            </button>
+            <span>
+              {String(active + 1).padStart(2, "0")} /{" "}
+              {String(teamImages.length).padStart(2, "0")}
+            </span>
+            <button
+              onClick={() => go(active + 1)}
+              disabled={active === teamImages.length - 1}
+              aria-label="Próximo profissional"
+            >
+              <ChevronRight />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="coverflow-viewport">
+        <m.div
+          ref={coverflowRef}
+          className="coverflow-drag"
+          onPointerDown={(e) => {
+            suppressClick.current = false;
+            swipeStart.current = e.clientX;
+            e.target.closest("button")?.setPointerCapture(e.pointerId);
+          }}
+          onPointerUp={(e) => {
+            if (swipeStart.current !== null) {
+              const delta = e.clientX - swipeStart.current;
+              if (Math.abs(delta) > 55) {
+                suppressClick.current = true;
+                go(active + (delta < 0 ? 1 : -1));
+              }
+              swipeStart.current = null;
+            }
+          }}
+          onPointerCancel={() => {
+            swipeStart.current = null;
+          }}
+        >
+          {teamImages.map((src, i) => {
+            const d = i - active;
+            const abs = Math.abs(d);
+            return (
+              <m.button
+                key={src}
+                type="button"
+                className={`coverflow-card ${d === 0 ? "is-active" : ""}`}
+                onClick={() => {
+                  if (!suppressClick.current) go(i);
+                  suppressClick.current = false;
+                }}
+                initial={false}
+                tabIndex={d === 0 ? 0 : -1}
+                aria-hidden={abs > 2}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    go(active + (e.key === "ArrowRight" ? 1 : -1));
+                  }
+                }}
+                aria-label={`Ver foto ${i + 1} da equipe`}
+                animate={{
+                  x: d * spacing,
+                  scale: d === 0 ? 1 : abs === 1 ? 0.86 : 0.72,
+                  rotateY: d === 0 ? 0 : d < 0 ? 38 : -38,
+                  opacity:
+                    abs > 2 ? 0 : abs === 2 ? 0.32 : abs === 1 ? 0.72 : 1,
+                  z: d === 0 ? 60 : 0,
+                }}
+                transition={
+                  reduced
+                    ? { duration: 0 }
+                    : {
+                        type: "spring",
+                        stiffness: 240,
+                        damping: 28,
+                        mass: 0.75,
+                      }
+                }
+                style={{ zIndex: 20 - abs }}
+              >
+                <ResponsiveImage
+                  src={`/images/equipe/${src}`}
+                  alt={`Equipe Turíbio — registro ${i + 1}`}
+                  draggable={false}
+                  sizes="(max-width:760px) 76vw, 290px"
+                />
+                <span className="coverflow-glow" />
+              </m.button>
+            );
+          })}
+        </m.div>
+      </div>
+      <div className="coverflow-dots" aria-label="Selecionar foto da equipe">
+        {teamImages.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => go(i)}
+            className={i === active ? "active" : ""}
+            aria-label={`Ir para foto ${i + 1}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export const services = [
+  {
+    slug: "implantes",
+    n: "01",
+    title: "Implantes dentários",
+    summary: "Um novo caminho para recuperar seu sorriso.",
+    icon: CircleDot,
+    intro: "A ausência de um dente merece um olhar individual.",
+    text: "A avaliação de implantes começa com uma conversa sobre suas necessidades e uma análise da saúde bucal. É a partir desse cuidado que a equipe pode discutir as possibilidades para o seu caso.",
+    steps: [
+      "Conversa sobre suas necessidades e histórico.",
+      "Avaliação clínica e exames, quando indicados.",
+      "Apresentação das possibilidades e do plano de tratamento.",
+    ],
+    questions: [
+      [
+        "Como saber se um implante é indicado para mim?",
+        "A indicação depende de avaliação individual. Entre em contato para conversar com a equipe e solicitar uma consulta.",
+      ],
+      [
+        "Posso saber o valor antes da avaliação?",
+        "O orçamento depende do planejamento e das necessidades identificadas. A equipe pode explicar como funciona a avaliação pelo WhatsApp.",
+      ],
+    ],
+  },
+  {
+    slug: "proteses",
+    n: "02",
+    title: "Próteses e reabilitação",
+    summary: "Cuidado para voltar a sorrir com confiança.",
+    icon: Smile,
+    intro: "Cada sorriso tem uma história. O cuidado também.",
+    text: "Na consulta, a equipe avalia suas necessidades e conversa sobre as possibilidades de reabilitação oral. O objetivo é construir um planejamento adequado à sua situação, com explicações claras sobre cada etapa.",
+    steps: [
+      "Escuta das suas dificuldades e expectativas.",
+      "Avaliação da condição bucal.",
+      "Conversa sobre opções, cuidados e acompanhamento.",
+    ],
+    questions: [
+      [
+        "Como escolher o tipo de prótese?",
+        "Essa escolha deve ser feita com o profissional após avaliar seu caso e discutir as alternativas.",
+      ],
+      [
+        "Já uso uma prótese. Posso agendar?",
+        "Sim. Conte à recepção o motivo da sua visita para solicitar uma avaliação.",
+      ],
+    ],
+  },
+  {
+    slug: "estetica",
+    n: "03",
+    title: "Estética dental",
+    summary: "Naturalidade para um sorriso que é seu.",
+    icon: Smile,
+    intro: "O primeiro passo é entender o que você deseja mudar.",
+    text: "Um planejamento estético começa com a saúde bucal e com a escuta das suas expectativas. Converse com a equipe sobre clareamento e outras possibilidades para o seu sorriso, sempre com avaliação individual.",
+    steps: [
+      "Conversa sobre o que incomoda e suas expectativas.",
+      "Avaliação da saúde bucal.",
+      "Planejamento e esclarecimento das alternativas.",
+    ],
+    questions: [
+      [
+        "Vocês realizam clareamento?",
+        "O clareamento aparece entre os cuidados divulgados pela clínica. Fale com a equipe para conhecer o atendimento e solicitar uma avaliação.",
+      ],
+      [
+        "Como saber qual procedimento escolher?",
+        "Você não precisa chegar com essa decisão tomada. A consulta é o momento de conhecer as opções adequadas ao seu caso.",
+      ],
+    ],
+  },
+  {
+    slug: "ortodontia",
+    n: "04",
+    title: "Aparelhos e alinhadores",
+    summary: "Planejamento para cuidar do alinhamento do sorriso.",
+    icon: ShieldCheck,
+    intro: "Um tratamento que começa com planejamento.",
+    text: "Conheça o atendimento em ortodontia da Turíbio. Na avaliação, você pode conversar sobre aparelhos e alinhadores, esclarecer dúvidas e entender como funciona o acompanhamento.",
+    steps: [
+      "Avaliação inicial e conversa sobre seus objetivos.",
+      "Exames e planejamento, conforme indicação.",
+      "Orientação sobre o tratamento e as consultas de acompanhamento.",
+    ],
+    questions: [
+      [
+        "Aparelho ou alinhador: qual escolher?",
+        "A escolha depende da avaliação e do planejamento profissional. A equipe explica as opções disponíveis para o seu caso.",
+      ],
+      [
+        "Qual é o tempo de tratamento?",
+        "O prazo é individual e deve ser discutido após a avaliação.",
+      ],
+    ],
+  },
+  {
+    slug: "clinica-geral",
+    n: "05",
+    title: "Cuidado e prevenção",
+    summary: "Atenção ao seu sorriso em todas as fases.",
+    icon: HeartHandshake,
+    intro: "O cuidado cotidiano também merece atenção.",
+    text: "A Turíbio oferece atendimento clínico geral para acompanhar sua saúde bucal. Agende uma avaliação para conversar sobre prevenção, limpeza e outras necessidades do seu sorriso.",
+    steps: [
+      "Escuta do motivo da consulta.",
+      "Avaliação clínica.",
+      "Orientações e definição dos próximos cuidados.",
+    ],
+    questions: [
+      [
+        "Posso marcar uma consulta de rotina?",
+        "Sim. Entre em contato pelo WhatsApp para consultar os horários disponíveis.",
+      ],
+      [
+        "Preciso escolher um tratamento antes de agendar?",
+        "Não. Você pode solicitar uma avaliação e contar à equipe o que está procurando.",
+      ],
+    ],
+  },
+];
+
+function Tooth({ className = "" }) {
+  return (
+    <svg
+      className={className}
+      width="38"
+      height="46"
+      viewBox="0 0 44 50"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M22 7C15 2 5 2 4 12c-1 8 5 13 6 20s2 13 5 13c4 0 3-18 8-18s4 18 8 18c3 0 4-9 5-15s6-12 4-19C37 0 27 5 22 7Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+      <path
+        d="M9 15c7-3 12 7 24-4M16 7c4 4 7 5 12 5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+    </svg>
+  );
+}
+function Brand() {
+  return (
+    <Link className="brand" to="/" aria-label="TURÍBIO ODONTOLOGIA, início">
+      <Tooth />
+      <span>
+        TURÍBIO<small>ODONTOLOGIA</small>
+      </span>
+    </Link>
+  );
+}
+const spring = { type: "spring", stiffness: 320, damping: 26 };
+function WhatsApp({
+  children = "Agendar uma avaliação",
+  subject = "",
+  className = "",
+}) {
+  const reduced = useReducedMotion();
+  const x = useSpring(0, spring);
+  const y = useSpring(0, spring);
+  const move = (e) => {
+    if (
+      reduced ||
+      !e.currentTarget.closest(".hero") ||
+      !window.matchMedia("(hover:hover) and (pointer:fine)").matches
+    )
+      return;
+    const box = e.currentTarget.getBoundingClientRect();
+    x.set(
+      Math.max(-8, Math.min(8, (e.clientX - box.left - box.width / 2) * 0.08)),
+    );
+    y.set(
+      Math.max(-8, Math.min(8, (e.clientY - box.top - box.height / 2) * 0.15)),
+    );
+  };
+  useEffect(() => {
+    if (reduced) {
+      x.jump(0);
+      y.jump(0);
+    }
+  }, [reduced, x, y]);
+  return (
+    <m.a
+      onPointerMove={move}
+      onPointerLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+      style={{ x: reduced ? 0 : x, y: reduced ? 0 : y }}
+      whileHover={reduced ? undefined : { scale: 1.015 }}
+      whileTap={reduced ? undefined : { scale: 0.98 }}
+      transition={reduced ? { duration: 0 } : spring}
+      className={`button ${className}`}
+      href={whatsapp(subject)}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {children}
+      <ArrowUpRight size={18} />
+    </m.a>
+  );
+}
+function spotlight(e) {
+  if (
+    !window.matchMedia(
+      "(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)",
+    ).matches
+  )
+    return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+  e.currentTarget.style.setProperty("--my", `${e.clientY - rect.top}px`);
+}
+function ValuesStrip() {
+  const labels = [
+    "Atenção em cada detalhe",
+    "Planejamento individual",
+    "Cuidado com proximidade",
+  ];
+  return (
+    <div className="values-strip">
+      <div className="values-track">
+        {[0, 1].map((copy) => (
+          <div
+            className="values-group"
+            key={copy}
+            aria-hidden={copy === 1 ? true : undefined}
+          >
+            {labels.map((label) => (
+              <span key={label}>
+                <Plus size={14} />
+                {label}
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+function Reveal({ children, className = "", delay = 0 }) {
+  const reduced = useReducedMotion();
+  return (
+    <m.div
+      className={className}
+      initial={reduced ? false : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{
+        duration: reduced ? 0 : 0.5,
+        delay: reduced ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
+      {children}
+    </m.div>
+  );
+}
+function StaggerGrid({ children, className }) {
+  const reduced = useReducedMotion();
+  return (
+    <m.div
+      className={className}
+      initial={reduced ? false : "hidden"}
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.08 }}
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: reduced ? 0 : 0.06 } },
+      }}
+    >
+      {React.Children.map(children, (child) => (
+        <m.div
+          variants={{
+            hidden: { opacity: 0, y: 18 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: reduced ? 0 : 0.4 },
+            },
+          }}
+        >
+          {child}
+        </m.div>
+      ))}
+    </m.div>
+  );
+}
+function JourneySteps({ children }) {
+  const ref = useRef(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 85%", "end 60%"],
+  });
+  return (
+    <div ref={ref} className="steps journey-steps">
+      <m.i
+        aria-hidden="true"
+        className="journey-line"
+        style={{ "--progress": reduced ? 1 : scrollYProgress }}
+      />
+      {children}
+    </div>
+  );
+}
+function JourneyStep({ children }) {
+  const ref = useRef(null);
+  const entered = useInView(ref, { once: true, amount: 0.5 });
+  const reduced = useReducedMotion();
+  return (
+    <m.div
+      ref={ref}
+      className={`journey-step ${entered || reduced ? "is-entered" : ""}`}
+      initial={false}
+      animate={{ opacity: 1 }}
+      transition={{ duration: reduced ? 0 : 0.3 }}
+    >
+      {children}
+    </m.div>
+  );
+}
+function PhotoReveal({ children, className = "" }) {
+  const ref = useRef(null);
+  const entered = useInView(ref, { once: true, amount: 0.15 });
+  const reduced = useReducedMotion();
+  return (
+    <div ref={ref} className={`photo-reveal ${className}`}>
+      <m.div
+        className="photo-mask"
+        initial={false}
+        animate={{
+          clipPath:
+            reduced || entered ? "inset(0 0 0% 0)" : "inset(0 0 100% 0)",
+        }}
+        transition={{ duration: reduced ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {children}
+      </m.div>
+    </div>
+  );
+}
+function Header() {
+  const reduced = useReducedMotion();
+  const [hovered, setHovered] = useState(null);
+  const navRef = useRef(null);
+  const menuRef = useRef(null);
+  const [indicator, setIndicator] = useState({ x: 0, width: 0, opacity: 0 });
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  useEffect(() => setOpen(false), [location]);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        menuRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [open]);
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const update = () => {
+      const target = [...nav.querySelectorAll("a")].find(
+        (a) => a.getAttribute("href") === (hovered || "/" + location.hash),
+      );
+      if (target)
+        setIndicator({
+          x: target.offsetLeft,
+          width: target.offsetWidth,
+          opacity: 1,
+        });
+      else setIndicator((v) => ({ ...v, opacity: 0 }));
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, [hovered, location.hash]);
+  const links = [
+    ["Tratamentos", "/#tratamentos"],
+    ["Nossa essência", "/#clinica"],
+    ["Como funciona", "/#jornada"],
+    ["Localização", "/#contato"],
+  ];
+  return (
+    <header className="header">
+      <div className="container nav">
+        <Brand />
+        <nav
+          ref={navRef}
+          className="desktop-nav"
+          aria-label="Navegação principal"
+        >
+          {links.map(([t, h]) => (
+            <Link
+              key={h}
+              to={h}
+              onMouseEnter={() => setHovered(h)}
+              onMouseLeave={() => setHovered(null)}
+              onFocus={() => setHovered(h)}
+              onBlur={() => setHovered(null)}
+            >
+              {t}
+            </Link>
+          ))}
+          <m.span
+            aria-hidden="true"
+            className="nav-indicator"
+            layoutId="nav-indicator"
+            initial={false}
+            animate={indicator}
+            transition={reduced ? { duration: 0 } : spring}
+          />
+        </nav>
+        <WhatsApp className="header-cta">Vamos conversar</WhatsApp>
+        <button
+          ref={menuRef}
+          className="menu-toggle"
+          aria-label={open ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X /> : <Menu />}
+        </button>
+      </div>
+      <AnimatePresence>
+        {open && (
+          <m.nav
+            id="mobile-menu"
+            aria-label="Navegação mobile"
+            className="mobile-nav"
+            transition={reduced ? { duration: 0 } : spring}
+            initial={reduced ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+          >
+            {links.map(([t, h]) => (
+              <Link onClick={() => setOpen(false)} key={h} to={h}>
+                {t}
+                <ArrowUpRight size={18} />
+              </Link>
+            ))}
+            <WhatsApp />
+          </m.nav>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}
+function Accordion({ items }) {
+  const [active, setActive] = useState(null);
+  const reduced = useReducedMotion();
+  return (
+    <div className="accordion">
+      {items.map(([q, a], i) => (
+        <div className="faq-item" key={q}>
+          <h3>
+            <button
+              aria-expanded={active === i}
+              aria-controls={`answer-${i}`}
+              onClick={() => setActive(active === i ? null : i)}
+            >
+              {q}
+              <m.span
+                transition={reduced ? { duration: 0 } : spring}
+                animate={{ rotate: active === i ? 45 : 0 }}
+              >
+                <Plus size={20} />
+              </m.span>
+            </button>
+          </h3>
+          <m.div
+            id={`answer-${i}`}
+            role="region"
+            aria-label={q}
+            initial={false}
+            animate={{
+              height: active === i ? "auto" : 0,
+              opacity: active === i ? 1 : 0,
+            }}
+            transition={{ duration: reduced ? 0 : 0.25 }}
+            style={{ overflow: "hidden" }}
+            inert={active !== i ? true : undefined}
+          >
+            <p>{a}</p>
+          </m.div>
+        </div>
+      ))}
+    </div>
+  );
+}
+function Home() {
+  const reduced = useReducedMotion();
+  return (
+    <>
+      <m.section
+        className="hero container"
+        initial={reduced ? false : "hidden"}
+        animate="visible"
+      >
+        <div className="hero-copy">
+          <div className="hero-content">
+            <span className="eyebrow">
+              <span className="little-line" /> ODONTOLOGIA FEITA DE CUIDADO
+            </span>
+            <HeroTitle />
+            <m.p
+              variants={{
+                hidden: { opacity: reduced ? 1 : 0, y: reduced ? 0 : 6 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: reduced ? 0 : heroTiming.copyDuration,
+                    delay: reduced ? 0 : heroTiming.copyStart,
+                  },
+                },
+              }}
+            >
+              Um espaço para ouvir você, acolher suas dúvidas e cuidar do seu
+              sorriso em cada etapa.
+            </m.p>
+            {/* Keep the CTA readable and clickable from the first frame; only its position settles last. */}
+            <m.div
+              className="hero-action"
+              variants={{
+                hidden: { y: reduced ? 0 : 5 },
+                visible: {
+                  y: 0,
+                  transition: {
+                    duration: reduced ? 0 : 0.28,
+                    delay: reduced ? 0 : 0.7,
+                  },
+                },
+              }}
+            >
+              <WhatsApp />
+            </m.div>
+            <a
+              className="hero-location"
+              href={clinic.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MapPin size={15} /> Setor Garavelo · Aparecida de Goiânia
+            </a>
+          </div>
+        </div>
+        <HeroVisual />
+      </m.section>
+      <ValuesStrip />
+      <section className="section container treatments" id="tratamentos">
+        <Reveal className="section-heading">
+          <div>
+            <span className="eyebrow">01 / CUIDADOS PARA VOCÊ</span>
+            <h2>
+              Cada sorriso pede
+              <br />
+              <em>um cuidado diferente.</em>
+            </h2>
+          </div>
+          <p>
+            Da prevenção à reabilitação, conheça as possibilidades e converse
+            com a nossa equipe.
+          </p>
+        </Reveal>
+        <StaggerGrid className="treatment-grid">
+          {services.map((s, i) => (
+            <React.Fragment key={s.slug}>
+              <Link
+                className="treatment-card"
+                onPointerMove={spotlight}
+                to={`/tratamentos/${s.slug}`}
+              >
+                <div className="card-top">
+                  <s.icon size={31} strokeWidth={1.2} />
+                  <span>{s.n}</span>
+                </div>
+                <h3>{s.title}</h3>
+                <p>{s.summary}</p>
+                <span className="card-link">
+                  Conhecer tratamento <ArrowUpRight size={19} />
+                </span>
+              </Link>
+            </React.Fragment>
+          ))}
+          <React.Fragment>
+            <div className="treatment-card help-card">
+              <MessageCircle size={30} strokeWidth={1.2} />
+              <h3>
+                Por onde
+                <br />
+                começar?
+              </h3>
+              <p>Você não precisa decidir sozinho. Vamos conversar.</p>
+              <a
+                href={whatsapp()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card-link"
+              >
+                Falar com a equipe <ArrowUpRight size={19} />
+              </a>
+            </div>
+          </React.Fragment>
+        </StaggerGrid>
+        <Reveal className="also-care">
+          <span className="eyebrow">TAMBÉM CUIDAMOS DE</span>
+          <ul>
+            {[
+              "Limpeza dental",
+              "Extração dentária",
+              "Tratamento de canal",
+              "Atendimento infantil",
+            ].map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </Reveal>
+      </section>
+      <section className="clinic-section" id="clinica">
+        <div className="container clinic-grid">
+          <Reveal className="clinic-images clinic-images-single">
+            <PhotoReveal className="photo portrait essence-photo">
+              <ResponsiveImage
+                className="essence-direct-image"
+                src="/images/essencia-protese.png"
+                alt="Resultado de prótese parcial removível realizado pela Turíbio"
+              />
+            </PhotoReveal>
+            <span className="photo-label">GENTE QUE CUIDA DE GENTE.</span>
+          </Reveal>
+          <Reveal className="clinic-copy">
+            <span className="eyebrow">02 / NOSSA ESSÊNCIA</span>
+            <h2>
+              Mais que cuidar
+              <br />
+              de dentes.
+              <br />
+              <em>Cuidar de pessoas.</em>
+            </h2>
+            <p>
+              Acreditamos que o cuidado começa quando você se sente à vontade.
+              Para perguntar, contar sua história e falar sobre o que espera do
+              seu sorriso.
+            </p>
+            <p>
+              Na Turíbio, queremos que você conheça o espaço, converse com a
+              equipe e entenda os próximos passos do seu atendimento.
+            </p>
+            <div className="clinic-detail">
+              <HeartHandshake size={22} />
+              <span>
+                Uma conversa aberta.
+                <br />
+                <strong>Um cuidado pensado para você.</strong>
+              </span>
+            </div>
+            <WhatsApp className="button-outline">Conhecer a clínica</WhatsApp>
+          </Reveal>
+        </div>
+      </section>
+      <TeamCoverflow />
+      <section className="section container info-section">
+        <Reveal>
+          <span className="eyebrow">SOBRE NÓS</span>
+          <h2>Sobre a Turíbio</h2>
+          <p className="info-lead">
+            Na Turíbio, o atendimento começa pela escuta. Cuidamos da saúde
+            bucal de toda a família, da prevenção aos casos mais complexos, e
+            explicamos cada etapa com clareza para você decidir com
+            tranquilidade.
+          </p>
+        </Reveal>
+        <Reveal>
+          <span className="eyebrow">HORÁRIO DE ATENDIMENTO</span>
+          <h2>Quando receber você.</h2>
+          <div className="hours-card">
+            {clinic.hours.map((h) => (
+              <span key={h.label}>
+                {h.label} <b>{h.text}</b>
+              </span>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+      <section className="section container journey" id="jornada">
+        <Reveal className="center-heading">
+          <span className="eyebrow">03 / SEU PRIMEIRO PASSO</span>
+          <h2>
+            Começa com uma conversa.
+            <br />
+            <em>Continua com cuidado.</em>
+          </h2>
+        </Reveal>
+        <JourneySteps>
+          {[
+            [
+              "01",
+              "Vamos conversar",
+              "Envie uma mensagem pelo WhatsApp. Nossa equipe ajuda você a consultar a disponibilidade e solicitar uma avaliação.",
+            ],
+            [
+              "02",
+              "Queremos ouvir você",
+              "Na consulta, conte suas necessidades e expectativas. É o momento de conhecer a equipe e esclarecer suas dúvidas.",
+            ],
+            [
+              "03",
+              "Um plano para seu sorriso",
+              "Após a avaliação, converse sobre as possibilidades de tratamento, as etapas e os próximos cuidados.",
+            ],
+          ].map(([n, t, p], i) => (
+            <JourneyStep key={n}>
+              <span className="step-number">{n}</span>
+              <h3>{t}</h3>
+              <p>{p}</p>
+            </JourneyStep>
+          ))}
+        </JourneySteps>
+        <Reveal className="journey-action">
+          <WhatsApp>Dar o primeiro passo</WhatsApp>
+          <span>Agendamento sujeito à confirmação da equipe.</span>
+        </Reveal>
+      </section>
+      <section className="space-section">
+        <div className="container space-grid">
+          <Reveal>
+            <span className="eyebrow">UM ESPAÇO PARA ACOLHER</span>
+            <h2>
+              Pode chegar.
+              <br />
+              <em>Sinta-se à vontade.</em>
+            </h2>
+            <p>
+              Conheça um pouco do ambiente onde vamos receber você. A próxima
+              conversa pode ser aqui.
+            </p>
+            <a
+              className="text-link"
+              href={clinic.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Veja como nos encontrar <ArrowUpRight size={19} />
+            </a>
+          </Reveal>
+          <PhotoReveal className="space-photo">
+            <ResponsiveImage
+              className="direct-space-image"
+              src="/images/recepcao-nova.png"
+              alt="Recepção da Turíbio Odontologia"
+            />
+          </PhotoReveal>
+          <PhotoReveal className="space-photo narrow">
+            <ResponsiveImage
+              className="direct-space-image"
+              src="/images/consultorio-novo.jpg"
+              alt="Consultório da Turíbio Odontologia"
+            />
+          </PhotoReveal>
+        </div>
+      </section>
+      <section className="section container faq-section">
+        <Reveal>
+          <span className="eyebrow">04 / PODE PERGUNTAR</span>
+          <h2>
+            Suas dúvidas
+            <br />
+            <em>têm espaço aqui.</em>
+          </h2>
+          <p>
+            Não encontrou o que precisava?
+            <br />
+            Converse diretamente com a equipe.
+          </p>
+          <a
+            className="text-link"
+            href={whatsapp()}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Tirar uma dúvida <ArrowUpRight size={18} />
+          </a>
+        </Reveal>
+        <Reveal>
+          <Accordion
+            items={[
+              [
+                "Como agendar uma avaliação?",
+                "Use um dos botões de contato do site — como “Vamos conversar”, “Dar o primeiro passo” ou “Conversar pelo WhatsApp”. Você será direcionado ao WhatsApp da recepção para consultar a disponibilidade e solicitar sua avaliação. O horário é confirmado pela equipe.",
+              ],
+              [
+                "Onde fica a Turíbio?",
+                "A clínica fica no Setor Garavelo, em Aparecida de Goiânia (GO). Use o link de localização do site para abrir a rota diretamente no Google Maps.",
+              ],
+              [
+                "Preciso saber qual tratamento quero?",
+                "Não. Você pode começar contando o que está procurando ou o que incomoda no seu sorriso. Na avaliação, o profissional orienta os próximos passos.",
+              ],
+              [
+                "Como consultar valores e formas de pagamento?",
+                "Fale com a recepção sobre as condições de atendimento. O orçamento de um tratamento depende da avaliação e do planejamento do seu caso.",
+              ],
+              [
+                "Quais são os horários de atendimento?",
+                "Atendemos de segunda a sexta-feira, das 08:00 às 18:00, e aos sábados, das 08:00 às 12:30. Para agendar, consulte a disponibilidade do horário desejado com a recepção pelo WhatsApp.",
+              ],
+            ]}
+          />
+        </Reveal>
+      </section>
+      <section id="contato" className="contact-section">
+        <div className="container contact-grid">
+          <Reveal>
+            <span className="eyebrow">SEU SORRISO MERECE ATENÇÃO</span>
+            <h2>
+              Vamos cuidar
+              <br />
+              <em>do seu próximo sorriso?</em>
+            </h2>
+            <p>Fale com a nossa equipe e solicite sua avaliação.</p>
+            <WhatsApp className="button-gold">Conversar pelo WhatsApp</WhatsApp>
+          </Reveal>
+          <Reveal className="contact-card">
+            <MapPin size={25} strokeWidth={1.3} />
+            <span className="eyebrow">ENCONTRE A TURÍBIO</span>
+            <h3>
+              Perto de você.
+              <br />
+              No Setor Garavelo.
+            </h3>
+            <p>
+              {streetLine() && (
+                <>
+                  {streetLine()}
+                  <br />
+                </>
+              )}
+              Aparecida de Goiânia · GO
+            </p>
+            <a
+              className="button contact-route"
+              href={clinic.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Como chegar <ArrowUpRight size={18} />
+            </a>
+            {clinic.address.street && (
+              <iframe
+                className="contact-map"
+                title="Mapa com a localização da Turíbio Odontologia"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(fullAddress())}&output=embed`}
+              />
+            )}
+            <div className="contact-phone">
+              <MessageCircle size={18} />
+              <a href={whatsapp()} target="_blank" rel="noopener noreferrer">
+                {clinic.phoneDisplay}
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+    </>
+  );
+}
+function Treatment() {
+  const { pathname } = useLocation();
+  const item = services.find((s) => pathname.endsWith("/" + s.slug));
+  if (!item) return <NotFound />;
+  return (
+    <main>
+      <section className="container detail-hero">
+        <Link className="text-link" to="/#tratamentos">
+          ← Todos os tratamentos
+        </Link>
+        <Reveal>
+          <span className="eyebrow">
+            TURÍBIO ODONTOLOGIA / {item.title.toUpperCase()}
+          </span>
+          <h1>{item.title}</h1>
+          <h2>
+            <em>{item.intro}</em>
+          </h2>
+          <p>{item.text}</p>
+          <WhatsApp subject={item.title.toLowerCase()}>
+            Conversar sobre{" "}
+            {item.slug === "implantes" ? "implantes" : "o tratamento"}
+          </WhatsApp>
+        </Reveal>
+      </section>
+      <section className="detail-band">
+        <div className="container">
+          <span className="eyebrow">COMO COMEÇAMOS</span>
+          <div className="steps">
+            {item.steps.map((s, i) => (
+              <Reveal key={s}>
+                <span className="step-number">0{i + 1}</span>
+                <h3>{s}</h3>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="section container faq-section">
+        <div>
+          <span className="eyebrow">ANTES DA SUA VISITA</span>
+          <h2>
+            Vamos esclarecer
+            <br />
+            <em>suas dúvidas.</em>
+          </h2>
+        </div>
+        <Accordion items={item.questions} />
+      </section>
+      <section className="detail-end container">
+        <h2>
+          O próximo passo é <em>uma conversa.</em>
+        </h2>
+        <WhatsApp subject={item.title.toLowerCase()} />
+      </section>
+    </main>
+  );
+}
+function Privacy() {
+  return (
+    <main className="container privacy">
+      <span className="eyebrow">TURÍBIO ODONTOLOGIA</span>
+      <h1>Privacidade</h1>
+      <p>
+        Este site apresenta informações sobre a clínica e oferece links para
+        contato. Não há formulário de cadastro, área de login ou envio de dados
+        clínicos neste site.
+      </p>
+      <h2>Contato pelo WhatsApp</h2>
+      <p>
+        Ao clicar em um botão de contato, você será direcionado ao WhatsApp. A
+        mensagem sugerida só será enviada se você decidir enviá-la. O uso desse
+        serviço está sujeito às políticas do próprio WhatsApp.
+      </p>
+      <h2>Conteúdo e navegação</h2>
+      <p>
+        As fontes e imagens são carregadas junto com o site. Esta versão não
+        utiliza ferramentas de publicidade ou análise de navegação. O provedor
+        de hospedagem poderá processar registros técnicos necessários à
+        disponibilização do site.
+      </p>
+      {clinic.address.street && (
+        <>
+          <h2>Mapa</h2>
+          <p>
+            A seção de localização pode exibir um mapa do Google. Ao carregá-lo,
+            o Google pode receber informações técnicas do seu navegador, como
+            seu endereço IP, conforme as políticas do próprio Google.
+          </p>
+        </>
+      )}
+      <h2>Dúvidas</h2>
+      <p>
+        Para esclarecer questões sobre o atendimento e o uso das informações que
+        você compartilha com a clínica, entre em contato com a equipe pelo
+        WhatsApp.
+      </p>
+      <WhatsApp>Falar com a equipe</WhatsApp>
+    </main>
+  );
+}
+function NotFound() {
+  return (
+    <main className="container privacy">
+      <h1>Página não encontrada.</h1>
+      <Link className="button" to="/">
+        Voltar ao início <ArrowRight size={18} />
+      </Link>
+    </main>
+  );
+}
+function Footer() {
+  return (
+    <footer>
+      <div className="container footer-top">
+        <Brand />
+        <p>
+          Cuidar do seu sorriso.
+          <br />
+          Com atenção, em cada detalhe.
+        </p>
+        <a
+          href={clinic.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Nosso Instagram <ArrowUpRight size={17} />
+        </a>
+      </div>
+      <div className="container footer-bottom">
+        <span>
+          © 2026 Um produto{" "}
+          <a
+            href="https://codental.com.br/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>Codental</strong>
+          </a>
+          . Todos os direitos reservados.
+        </span>
+        <span>Setor Garavelo · Aparecida de Goiânia</span>
+        <Link to="/privacidade">Privacidade</Link>
+      </div>
+    </footer>
+  );
+}
+function RouteFrame({ children }) {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    applyHead(seoFor(pathname, services));
+    const id = requestAnimationFrame(() => {
+      if (hash) {
+        document
+          .getElementById(hash.slice(1))
+          ?.scrollIntoView({ behavior: "instant" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "instant" });
+        document.getElementById("main")?.focus({ preventScroll: true });
+      }
+    });
+    return () => cancelAnimationFrame(id);
+  }, [pathname, hash]);
+  return children;
+}
+function AnimatedRoutes() {
+  const location = useLocation();
+  const reduced = useReducedMotion();
+  return (
+    <AnimatePresence mode="wait">
+      <m.div
+        key={location.pathname}
+        onAnimationComplete={(definition) => {
+          if (definition.opacity === 1 && location.hash)
+            document
+              .getElementById(location.hash.slice(1))
+              ?.scrollIntoView({ behavior: "instant" });
+        }}
+        initial={
+          reduced || location.pathname === "/" ? false : { opacity: 0, y: 8 }
+        }
+        animate={{ opacity: 1, y: 0 }}
+        exit={reduced ? undefined : { opacity: 0, y: -6 }}
+        transition={{ duration: reduced ? 0 : 0.18 }}
+      >
+        <Routes location={location}>
+          <Route
+            path="/"
+            element={
+              <RouteFrame>
+                <main>
+                  <Home />
+                </main>
+              </RouteFrame>
+            }
+          />
+          <Route
+            path="/tratamentos/:slug"
+            element={
+              <RouteFrame>
+                <Treatment />
+              </RouteFrame>
+            }
+          />
+          <Route
+            path="/privacidade"
+            element={
+              <RouteFrame>
+                <Privacy />
+              </RouteFrame>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <RouteFrame>
+                <NotFound />
+              </RouteFrame>
+            }
+          />
+        </Routes>
+      </m.div>
+    </AnimatePresence>
+  );
+}
+function FloatingWhatsApp() {
+  const [visible, setVisible] = useState(false);
+  const { pathname } = useLocation();
+  useEffect(() => {
+    let scrolled = false;
+    let nearContact = false;
+    const update = () => setVisible(scrolled && !nearContact);
+    const onScroll = () => {
+      scrolled = window.scrollY > 480;
+      update();
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const target = document.getElementById("contato");
+    let io;
+    if (target && "IntersectionObserver" in window) {
+      io = new IntersectionObserver(
+        ([entry]) => {
+          nearContact = entry.isIntersecting;
+          update();
+        },
+        { rootMargin: "0px 0px -15% 0px" },
+      );
+      io.observe(target);
+    }
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      io?.disconnect();
+    };
+  }, [pathname]);
+  return (
+    <AnimatePresence>
+      {visible && (
+        <m.a
+          key="floating-whatsapp"
+          className="floating-whatsapp"
+          href={whatsapp()}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Conversar pelo WhatsApp"
+          initial={{ opacity: 0, y: 16, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <MessageCircle size={20} />
+          <span>Conversar</span>
+        </m.a>
+      )}
+    </AnimatePresence>
+  );
+}
+export default function App() {
+  return (
+    <MotionConfig reducedMotion="user">
+      <LazyMotion features={domAnimation} strict>
+        <a className="skip-link" href="#main">
+          Pular para o conteúdo
+        </a>
+        <Header />
+        <div id="main" tabIndex={-1}>
+          <AnimatedRoutes />
+        </div>
+        <Footer />
+        <FloatingWhatsApp />
+      </LazyMotion>
+    </MotionConfig>
+  );
+}

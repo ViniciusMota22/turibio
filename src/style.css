@@ -2414,3 +2414,87 @@ h2 {
 .hero .hero-note strong {
   color: var(--navy);
 }
+
+/* --- Acréscimos: "também cuidamos de", Como chegar, mapa e botão flutuante --- */
+.also-care {
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid #10222c1f;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+}
+.also-care .eyebrow {
+  margin: 0;
+}
+.also-care ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.also-care li {
+  padding: 10px 18px;
+  border: 1px solid #b9c9cc;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--navy);
+  background: #ffffff66;
+}
+.contact-card > a.contact-route {
+  display: flex;
+  justify-content: space-between;
+  min-height: 50px;
+  padding: 13px 20px;
+  border: 1px solid #d7c69f;
+  border-radius: 3px;
+  background: transparent;
+  color: #f0ede6;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+.contact-card > a.contact-route:hover {
+  background: #d7c69f;
+  color: var(--navy);
+}
+.contact-map {
+  display: block;
+  width: 100%;
+  height: 220px;
+  margin-top: 18px;
+  border: 0;
+  border-radius: 3px;
+}
+.floating-whatsapp {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 60;
+  display: none;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 20px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 10px 30px #102c3847;
+}
+.floating-whatsapp svg {
+  color: #d7c69f;
+}
+@media (max-width: 760px) {
+  .floating-whatsapp {
+    display: inline-flex;
+  }
+  .also-care {
+    margin-top: 48px;
+  }
+}

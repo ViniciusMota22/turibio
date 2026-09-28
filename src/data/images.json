@@ -217,8 +217,8 @@
     ]
   },
   "hero-consultorio.png": {
-    "width": 749,
-    "height": 624,
+    "width": 782,
+    "height": 1024,
     "variants": [
       {
         "width": 400,
@@ -226,9 +226,9 @@
         "avif": "/images/hero-consultorio-400.avif"
       },
       {
-        "width": 749,
-        "webp": "/images/hero-consultorio-749.webp",
-        "avif": "/images/hero-consultorio-749.avif"
+        "width": 782,
+        "webp": "/images/hero-consultorio-782.webp",
+        "avif": "/images/hero-consultorio-782.avif"
       }
     ]
   },
