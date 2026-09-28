@@ -1,1 +1,29 @@
-{"name":"turibio-odontologia","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"vite --host 127.0.0.1","build":"vite build","preview":"vite preview --host 127.0.0.1"},"dependencies":{"@fontsource-variable/manrope":"^5.2.8","@fontsource/cormorant-garamond":"^5.2.8","lucide-react":"^0.468.0","motion":"^12.0.0","react":"^19.0.0","react-dom":"^19.0.0","react-router-dom":"^7.0.0"},"devDependencies":{"@playwright/test":"^1.63.0","lighthouse":"^13.5.0","prettier":"^3.9.9","sharp":"^0.35.5","vite":"^6.0.0"}}
+{
+  "name": "turibio-odontologia",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "prebuild": "node scripts/images.mjs --hero",
+    "predev": "node scripts/images.mjs --hero"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource/cormorant-garamond": "^5.2.8",
+    "lucide-react": "^0.468.0",
+    "motion": "^12.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "lighthouse": "^13.5.0",
+    "prettier": "^3.9.9",
+    "sharp": "^0.35.5",
+    "vite": "^6.0.0"
+  }
+}
