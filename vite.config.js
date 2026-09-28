@@ -1,5 +1,7 @@
 import { defineConfig } from "vite";
 export default defineConfig({
+  // No build SSR, empacota tudo (inclusive CSS de fontes) para o Node conseguir importar.
+  ssr: { noExternal: true },
   build: {
     rollupOptions: {
       onwarn(warning, warn) {

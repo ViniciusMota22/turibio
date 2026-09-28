@@ -81,3 +81,35 @@ A revisão do hero tem sete commits por item, incluindo validação dos itens j�
 Validação final: build sem erros/warnings; Lighthouse mobile local 93/100 em Performance e 100/100 em Acessibilidade; 360, 768 e 1440px com e sem reduced-motion; CTA visível e clicável na primeira verificação (0,26–0,47s no ambiente local). Esse tempo depende do dispositivo e da rede; não é uma garantia de carregamento em toda conexão 4G. Equipe, FAQ, tratamentos, privacidade e rodapé foram comparados ao commit anterior e permanecem idênticos. Testes de teclado, arraste e âncoras passaram.
 
 Capturas desta revisão: `reports/hero-focus-360.png`, `reports/hero-focus-768.png` e `reports/hero-focus-1440.png`. Resultados detalhados em `reports/hero-focus.json`.
+
+
+## v6 — SEO, compartilhamento e conversão
+
+Base: versão "hero". Nada foi publicado.
+
+### O que mudou
+
+1. **Foto do hero nova** (consultório claro, enviada pela equipe): `originals/hero-consultorio.png`. Variantes WebP/AVIF e preload regenerados por `scripts/images.mjs --hero`.
+2. **Pré-renderização por rota.** `npm run build` agora gera HTML estático com conteúdo, título, descrição e canonical próprios para `/`, cinco tratamentos e `/privacidade`. O navegador hidrata o mesmo HTML (sem erros de hidratação nos testes). Sem JavaScript, o conteúdo continua legível.
+3. **Open Graph e Twitter Card** com imagem de compartilhamento `public/og-image.jpg` (1200x630, gerada por `node scripts/og.mjs`). É o que aparece quando o link é enviado no WhatsApp/Instagram.
+4. **Dados estruturados** (`Dentist`, JSON-LD) na home, só com dado confirmado: nome, telefone, horários, cidade e Instagram.
+5. **`sitemap.xml`, `robots.txt` e `404.html` reais.** Rotas inexistentes respondem com status 404 (antes, 200 por causa do redirecionamento para `index.html`). `vercel.json` sem rewrite genérico, com `cleanUrls` e cache de `/assets` e `/images`. `public/_redirects` (Netlify) foi removido pelo mesmo motivo.
+6. **Botão flutuante de WhatsApp** no celular: aparece após rolar, some perto da seção de contato, respeita safe-area e reduced-motion.
+7. **"Como chegar"** no contato e **dados da clínica centralizados** em `src/data/clinic.js` (telefone, horários, endereço, links). Horários do site e do JSON-LD leem do mesmo lugar.
+8. **Conteúdo:** texto de "Sobre a Turíbio" reescrito na voz do resto do site (**revisar com a clínica**); a lista "Nossos serviços" duplicava os cards de tratamento e virou "Também cuidamos de" (limpeza, extração, canal e atendimento infantil), sem repetir implantes e estética.
+
+### Preencher quando a clínica confirmar
+
+Em `src/data/clinic.js`, campo `address` (`street`, `number`, `postalCode`, `complement`). Ao preencher, o site passa a mostrar a rua, incorpora o mapa do Google no contato, acrescenta um parágrafo na página de privacidade e completa o JSON-LD. Vazio = nada disso aparece.
+
+### Domínio
+
+O endereço usado nos metadados é `https://turibio.vercel.app`. Com domínio próprio, defina a variável de ambiente `SITE_URL` (ex.: `https://www.turibio.com.br`) na hospedagem antes do build.
+
+### Testado (local, Chromium headless)
+
+Build sem erros; 7 rotas + 404 pré-renderizadas; hidratação sem erros de console; título/canonical atualizam na navegação; sem JavaScript o conteúdo aparece; botão flutuante aparece, some no contato e no topo; 404 com status 404. Capturas em `reports/v6/`. Os números de Lighthouse acima são da versão anterior e não foram refeitos nesta.
+
+### Ainda pendente (depende da clínica)
+
+Endereço completo; nome do responsável técnico e CRO (exigência de publicidade odontológica, confirmar com a clínica/conselho); logotipo oficial; avaliações e fotos autorizadas; medição de cliques (se quiserem, ferramenta sem cookies e atualização da política de privacidade). O CSS antigo de `.services-list*` ficou sem uso e pode ser removido.
