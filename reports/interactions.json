@@ -1,0 +1,7 @@
+{
+  "slidingIndicator": true,
+  "swipe": true,
+  "cardClick": true,
+  "crossRouteAnchor": true,
+  "errors": []
+}

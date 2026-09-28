@@ -1,0 +1,152 @@
+[
+  {
+    "width": 360,
+    "images": [
+      {
+        "src": "http://127.0.0.1:4173/images/hero-consultorio-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/essencia-protese-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/731158349_17942677818247738_4921347707780340768_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/742771039_17946492786247738_7511137986732517166_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/746164079_17945692668247738_4256013866608381426_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/746285169_17945692620247738_1989676438566413693_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/748053991_17945692635247738_7823210411068339356_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/749681241_17945692563247738_1020044448583227065_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/753231592_17946492798247738_7659393754494299367_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/recepcao-nova-345.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/consultorio-novo-400.avif",
+        "loaded": true
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "images": [
+      {
+        "src": "http://127.0.0.1:4173/images/hero-consultorio-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/essencia-protese-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/731158349_17942677818247738_4921347707780340768_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/742771039_17946492786247738_7511137986732517166_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/746164079_17945692668247738_4256013866608381426_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/746285169_17945692620247738_1989676438566413693_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/748053991_17945692635247738_7823210411068339356_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "",
+        "loaded": false
+      },
+      {
+        "src": "",
+        "loaded": false
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/recepcao-nova-345.avif",
+        "loaded": true
+      },
+      {
+        "src": "",
+        "loaded": false
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "images": [
+      {
+        "src": "http://127.0.0.1:4173/images/hero-consultorio-749.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/essencia-protese-800.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/731158349_17942677818247738_4921347707780340768_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/742771039_17946492786247738_7511137986732517166_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/746164079_17945692668247738_4256013866608381426_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/746285169_17945692620247738_1989676438566413693_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/748053991_17945692635247738_7823210411068339356_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/749681241_17945692563247738_1020044448583227065_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/equipe/753231592_17946492798247738_7659393754494299367_n-400.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/recepcao-nova-345.avif",
+        "loaded": true
+      },
+      {
+        "src": "http://127.0.0.1:4173/images/consultorio-novo-800.avif",
+        "loaded": true
+      }
+    ],
+    "overflow": false
+  }
+]

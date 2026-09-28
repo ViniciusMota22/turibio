@@ -1,59 +1,51 @@
-# Turíbio Odontologia
+# Turíbio Odontologia — acabamento e performance
 
-Primeira versão funcional do site, construída com React, Vite e Motion para React.
+Projeto local revisado. Nenhuma publicação foi realizada.
 
-## Rodar
-
-Requer Node.js 20.19+ ou 22.12+.
+## Executar
 
 ```sh
-npm install
+npm ci
 npm run dev
-```
-
-## Compilar e visualizar
-
-```sh
 npm run build
 npm run preview -- --port 4173
 ```
 
-O site compilado fica em `dist/`. O endereço local é http://127.0.0.1:4173. Abrir o HTML por duplo clique não executa corretamente a aplicação; use o servidor acima.
-
 ## Entrega
 
-- Página inicial responsiva com clínica, tratamentos, jornada de atendimento, FAQ e contato.
-- Cinco páginas de tratamentos e página de privacidade.
-- Cormorant Garamond nos títulos e Manrope no texto, hospedadas no próprio projeto.
-- Motion: revelação das seções, interações nos botões, abertura do menu e FAQ. Respeita a preferência de movimento reduzido.
-- Todos os contatos apontam para WhatsApp `5562981195003`, o número observado no perfil fornecido. As mensagens são sugestões e só são enviadas pelo visitante.
-- Sem formulários, contas, banco de dados ou rastreadores.
+1. Imagens WebP + AVIF com tamanhos responsivos, dimensões intrínsecas, lazy loading e prioridade/preload do hero. Originais preservadas em `originals/`, fora de `public/` e `dist/`. Sem ampliação artificial: algumas fotografias recebidas têm baixa resolução. Conversão reproduzível: `node scripts/images.mjs`.
+2. Loader removido; LazyMotion/domAnimation e componentes m. Coverflow com eventos nativos de ponteiro para dispensar domMax.
+3. Hero com texto fixo solicitado, entrada por palavras, foto com deslocamento de até 40px e selo em velocidade diferente. Legenda e scroll-cue removidos.
+4. Grids com stagger, jornada com progresso, rotas com AnimatePresence, menu com spring, indicador compartilhado e botões com feedback. O indicador mantém layoutId e anima posição/largura explicitamente, pois domAnimation não inclui projeção de layout.
+5. Spotlight dourado, magnet de até 8px no CTA principal, marquee pausado em hover; máscaras e zoom das fotos. Efeitos de ponteiro restritos a hover/pointer fino.
+6. Cormorant Garamond + Manrope locais, ritmo vertical ampliado, foco dourado, correções de contraste e teclado. O ZIP recebido tinha uma sobrescrita Montserrat; foi removida para atender à especificação atual.
 
-## Editar
+O gradiente animado opcional de contato foi omitido para evitar outra animação contínua. Não foram criados dados ou imagens da clínica. Tratamentos, telefone e horários comparados ao commit original. O conteúdo editorial foi preservado, exceto as alterações de hero autorizadas.
 
-- Conteúdo, serviços e telefone: `src/main.jsx`.
-- Cores, espaçamento, fontes e adaptação mobile: `src/style.css`.
-- Imagens: `public/images/`.
+## Validação
 
-## Antes da publicação definitiva
+- Build Vite concluído sem erros ou warnings. A configuração filtra somente o aviso de diretivas `use client` em dependências num build exclusivo de cliente; demais avisos continuam ativos.
+- Lighthouse 13.5.0, Chrome headless, em build de produção local, configuração mobile padrão: **Performance 94 / Acessibilidade 100**.
+- **180.410 bytes** de imagens transferidas na auditoria (aproximadamente 180 KB); CLS **0**; LCP **2,9 s**.
+- Larguras **360, 768 e 1440px** sem transbordamento horizontal. Capturas do hero e das seções em `reports/`.
+- FAQ por Enter e atributo inert; menu por Enter/Escape; coverflow por setas, arraste e clique; todas as sete imagens da equipe; rotas e retorno por âncora verificados.
+- Movimento reduzido: zero animações do navegador, transições CSS desativadas, máscaras abertas e componentes visíveis, interações Motion com duração zero.
+- Números de Lighthouse são medições locais e variam com dispositivo, hospedagem e rede. Não representam medição de um site publicado.
 
-1. Substituir os prints pelas fotos originais em boa resolução. A versão atual mantém os prints inteiros e seleciona visualmente os trechos com CSS. Isso não serve como otimização definitiva de imagens: os arquivos completos ainda são transferidos.
-2. Substituir a representação provisória do logotipo pelo arquivo oficial da marca.
-3. Confirmar endereço completo, horários, profissionais, registros e os serviços descritos. Estes dados não foram inventados nem publicados como confirmados.
-4. Revisar o conteúdo com o responsável da clínica e confirmar o uso das fotos no site.
-5. Configurar domínio e hospedagem. Esta entrega é local e não publica o site na internet.
-6. Complementar os dados de identificação da clínica e a página de privacidade de acordo com a operação e a hospedagem escolhidas.
+Relatório navegável: `reports/lighthouse-mobile.report.html`.
 
-## Hospedagem e busca
+Com a prévia em execução e Chrome instalado:
 
-É uma aplicação estática React com rotas no navegador. A hospedagem precisa devolver `index.html` para as rotas de tratamentos e privacidade. Há exemplos de configuração para Netlify (`public/_redirects`) e Vercel (`vercel.json`).
+```sh
+node scripts/verify.mjs
+node scripts/interactions.mjs
+node scripts/visual-check.mjs
+node scripts/content-check.mjs
+node scripts/audit.mjs
+```
 
-Os títulos mudam por página. Para uma etapa voltada à aquisição por busca, adicionar pré-renderização por rota, metadados específicos, sitemap e dados locais após confirmar o domínio e as informações da clínica.
+As ferramentas sharp, Playwright, Prettier e Lighthouse são dependências de desenvolvimento e não entram no JavaScript entregue ao paciente. `reports/images.json` registra também imagens lazy ainda fora da viewport; o teste de teclado visita e decodifica todas as sete fotos.
 
-Documentação da biblioteca de animação: https://motion.dev/docs/react
+## Histórico
 
-
-## v4
-- Equipe atualizada para um coverflow 3D inspirado no exemplo Carousel: Coverflow do Motion.
-- Navegação por arraste/swipe, roda do mouse, setas e indicadores.
-- Revisão mobile-first: hero, tratamentos, serviços, horários, jornada, espaço, FAQ, contato e rodapé.
+O repositório contém o baseline original e seis commits de implementação, um por bloco solicitado. O sexto inclui a verificação integrada e correções encontradas nela. `turibio-history.bundle` acompanha o ZIP como cópia portátil do histórico Git.

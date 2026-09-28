@@ -1,0 +1,50 @@
+[
+  {
+    "width": 360,
+    "overflow": false,
+    "images": 4495,
+    "fonts": [
+      "\"Cormorant Garamond\", Georgia, serif",
+      "\"Manrope Variable\", sans-serif"
+    ],
+    "animations": 0,
+    "faqOpen": true,
+    "faqClosed": true,
+    "coverflow": "02 / 07",
+    "treatment": "Implantes dentários",
+    "privacy": "Privacidade",
+    "errors": []
+  },
+  {
+    "width": 768,
+    "overflow": false,
+    "images": 13023,
+    "fonts": [
+      "\"Cormorant Garamond\", Georgia, serif",
+      "\"Manrope Variable\", sans-serif"
+    ],
+    "animations": 0,
+    "faqOpen": true,
+    "faqClosed": true,
+    "coverflow": "02 / 07",
+    "treatment": "Implantes dentários",
+    "privacy": "Privacidade",
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "overflow": false,
+    "images": 34204,
+    "fonts": [
+      "\"Cormorant Garamond\", Georgia, serif",
+      "\"Manrope Variable\", sans-serif"
+    ],
+    "animations": 0,
+    "faqOpen": true,
+    "faqClosed": true,
+    "coverflow": "02 / 07",
+    "treatment": "Implantes dentários",
+    "privacy": "Privacidade",
+    "errors": []
+  }
+]
